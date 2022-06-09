@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
+
 *, ::after, ::before {
     box-sizing: border-box;
 }
+
 .ctn {
     display: flex;
     flex-direction: column;
@@ -12,14 +14,16 @@
     margin-top: 3%;
     font-family: Poppins;
 }
+
 #grid {
     display: flex;
     width: 300px;
     height: 300px;
     flex-direction: row;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
 }
-#grid > div {
+
+#grid>div {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,41 +33,49 @@
     cursor: auto;
 }
 
-#grid > div:nth-child(3n + 2) {
-    
+#grid>div:nth-child(3n + 2) {
+
     border-left: 3px solid black;
     border-right: 3px solid black;
 }
-#grid > div:nth-child(4), div:nth-child(5), div:nth-child(6) {
+
+#grid>div:nth-child(4), div:nth-child(5), div:nth-child(6) {
     border-top: 3px solid black;
     border-bottom: 3px solid black;
 }
+
 .gray_icon {
     color: gray;
 }
+
 #turn {
     font-family: 'Raleway';
     font-weight: 800;
     font-size: 1.5rem;
     color: gray;
 }
+
 #tblock {
-    font-family: 'Noto Sans', sans-serif;;
+    font-family: 'Noto Sans', sans-serif;
+    ;
     font-weight: 800;
     font-size: 2rem;
     color: orange;
 }
+
 h1 {
-   text-align: center;
-   padding: 0.5rem;
+    text-align: center;
+    padding: 0.5rem;
 }
+
 #winInfo {
-   font-family: Poppins;
-   color: maroon;
-   font-size: 2rem;
-   padding: 0.5rem;
-   font-weight: 800;
+    font-family: Poppins;
+    color: maroon;
+    font-size: 2rem;
+    padding: 0.5rem;
+    font-weight: 800;
 }
+
 #startButton {
     font-size: 1.2rem;
     padding-left: 0.5rem;

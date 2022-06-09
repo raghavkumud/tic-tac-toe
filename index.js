@@ -137,7 +137,7 @@ function deleteTimer() {
     var player = (turn == 0) ? player1 : player2;
     var timer = (turn == 0) ? player1.timer : player2.timer;
     if (gameTimer.isRunning && timer <= 0) {
-        reset(player);
+        resetTimer(player);
         gameTimer.isRunning = false;
         var el = document.getElementById('turn');
         el.innerHTML = "";
@@ -159,18 +159,18 @@ function deleteTimer() {
 }
 // update game board according to the player's turn
 function updateGameBoard() {
-    if (turn == 0) {
-        resetTimer(player1);
-        stopTimer(player1);
-    } else {
-        resetTimer(player2);
-        stopTimer(player2);
-    }
     const el = document.getElementById('turn')
     el.innerHTML = "It's " + (turn == 0 ? "X" : 'O') + " turn now";
     let id = this.getAttribute('id');
     id = parseInt(id);
     if (available[id]) {
+        if (turn == 0) {
+            resetTimer(player1);
+            stopTimer(player1);
+        } else {
+            resetTimer(player2);
+            stopTimer(player2);
+        }
         const newIcon = document.createElement("i");
         const newDiv = document.createElement("div");
         newIcon.setAttribute('class', (turn == 0 ? OIconClass : XIconClass));
@@ -183,13 +183,13 @@ function updateGameBoard() {
         this.style.cursor = "not-allowed";
         available[id] = false;
         checkForWin();
-    }
-    if (turn == 1 && isWon == false) {
-        resetTimer(player2);
-        startTimer(player2);
-    } else if (isWon == false) {
-        resetTimer(player1);
-        startTimer(player1);
+        if (turn == 1 && isWon == false) {
+            resetTimer(player2);
+            startTimer(player2);
+        } else if (isWon == false) {
+            resetTimer(player1);
+            startTimer(player1);
+        }
     }
 }
 // start the game
