@@ -143,7 +143,7 @@ function deleteTimer() {
         el.innerHTML = "";
         const winningStatus = document.createElement('div');
         winningStatus.setAttribute('id', 'winInfo');
-        winningStatus.innerHTML = "Time Up ! " + ((turn == 1) ? "X" : 'O') + " has won the game.";
+        winningStatus.innerHTML = "Time Up ! " + ((turn == 1) ? 'O' : 'X') + " has won the game.";
         winningStatus.style.fontFamily = 'Raleway';
         var el = document.getElementsByClassName('ctn')[0]
         el.appendChild(winningStatus);
