@@ -1,6 +1,6 @@
 var turn = 0
-var one = 'fa-solid fa-o fa-5x';
-var two = 'fa-solid fa-xmark fa-6x';
+var OIconClass = 'fa-solid fa-o fa-5x';
+var XIconClass = 'fa-solid fa-xmark fa-6x';
 var mark = Array(10).fill(Number(-1))
 var available = Array(10).fill(true);
 var isWon = false;
@@ -15,50 +15,53 @@ var winningCombinations =
         [1, 5, 9],
         [3, 5, 9]
     ]
-var user1 = {
+var player1 = {
     timer: 15,
     id: 0
 }
-var user2 = {
+var player2 = {
     timer: 15,
     id: 0
+}
+var gameTimer = {
+    id: 0,
+    isRunning: false
 }
 function resetAll() {
-    mark = Array(10).fill(Number(-1));
+    mark = Array(10).fill(-1);
     available = Array(10).fill(true);
     isWon = false;
     turn = 0;
-    notDone = true;
+    gameTimer.isRunning = true;
     for (let x = 1; x <= 9; x++) {
         const id = x.toString();
         const el = document.getElementById(id);
         el.style.cursor = 'pointer';
         el.style.pointerEvents = 'auto';
     }
-
 }
 
-function decreaseCounter(user) {
-    user.timer -= 1;
-    if (user.timer <= 49) {
+function decreaseCounter(player) {
+    player.timer -= 1;
+    if (player.timer <= 49) {
         const element = document.getElementById('tblock');
         element.style.color = 'orange';
     }
-    console.log(user.timer);
-    setTimeValue(user);
+    console.log(player.timer);
+    updateTimer(player);
 }
 
-function start(user) {
-    user.id = setInterval(decreaseCounter, 1000, user);
+function startTimer(player) {
+    player.id = setInterval(decreaseCounter, 1000, player);
 }
-function stop(user) {
-    clearInterval(user.id);
-    setTimeValue(user);
+function stopTimer(player) {
+    clearInterval(player.id);
+    updateTimer(player);
 }
-function reset(user) {
-    clearInterval(user.id);
-    user.timer = 15;
-    setTimeValue(user);
+function resetTimer(player) {
+    clearInterval(player.id);
+    player.timer = 15;
+    updateTimer(player);
 }
 function checkForWin() {
     var winningID = -1;
@@ -73,8 +76,8 @@ function checkForWin() {
     }
     if (isWon) {
         const winningStatus = document.createElement('div');
-        winningStatus.setAttribute('id', 'winCard');
-        winningStatus.innerHTML = (winningID == Number(1) ? "O" : "X") + " has won the game.";
+        winningStatus.setAttribute('id', 'winInfo');
+        winningStatus.innerHTML = (winningID == 1 ? "O" : "X") + " has won the game.";
         var el = document.getElementsByClassName('ctn')[0]
         el.appendChild(winningStatus);
         const timerBlock = document.getElementById('tblock');
@@ -85,9 +88,9 @@ function checkForWin() {
         restartButton.innerHTML = 'Restart'
         restartButton.setAttribute('id', "restartButton");
         restartButton.setAttribute('class', "btn btn-success");
-        el.appendChild(restartButton);
         restartButton.addEventListener('click', restartTheGame);
-            clearInterval(gameTimer.id);
+        el.appendChild(restartButton);
+        clearInterval(gameTimer.id);
 
     } else {
         var cnt = 0;
@@ -96,11 +99,10 @@ function checkForWin() {
                 cnt++;
             }
         }
-        console.log("Cnt is : " + cnt);
         if (cnt == 9) {
             isWon = true;
             const winningStatus = document.createElement('div');
-            winningStatus.setAttribute('id', 'winCard');
+            winningStatus.setAttribute('id', 'winInfo');
             winningStatus.innerHTML = "It's a Draw";
             winningStatus.style.fontFamily = 'Raleway';
             var el = document.getElementsByClassName('ctn')[0]
@@ -113,70 +115,56 @@ function checkForWin() {
             restartButton.innerHTML = 'Restart'
             restartButton.setAttribute('id', "restartButton");
             restartButton.setAttribute('class', "btn btn-success");
-            el.appendChild(restartButton);
             restartButton.addEventListener('click', restartTheGame);
+            el.appendChild(restartButton);
             clearInterval(gameTimer.id);
-
         }
     }
-
 }
 
-
-
-function setTimeValue(user) {
-    let timer = user.timer;
+function updateTimer(player) {
+    let timer = player.timer;
     if (timer >= 0) {
-    const timerElement = document.getElementById('tblock');
-    let hours = Math.floor(timer / 3600);
-    timer = timer % 3600
-    let minutes = Math.floor(timer / 60);
-    timer = timer % 60;
-    let seconds = Math.floor(timer);
-    let currentValue = seconds.toString(10);
-    if (timerElement) timerElement.innerHTML = currentValue;
-       
+        const timerElement = document.getElementById('tblock');
+        timer = timer % 3600
+        timer = timer % 60;
+        let seconds = Math.floor(timer);
+        let currentValue = seconds.toString(10);
+        if (timerElement) timerElement.innerHTML = currentValue;
     }
-
 }
-var gameTimer = {
-    timerUpID: 0,
-    notDone: false
-} 
-function clearSetTimeValue() {
-    var user = (turn == 0) ? user1 : user2;
-    var timer = (turn == 0) ? user1.timer : user2.timer;
-    console.log("What the heck !");
-    if (gameTimer.notDone && timer <= 0)
-    {
-       reset(user);
-        gameTimer.notDone = false;
-    var el = document.getElementById('turn');
-    el.innerHTML = "";
-            const winningStatus = document.createElement('div');
-            winningStatus.setAttribute('id', 'winCard');
-            winningStatus.innerHTML = "Time Up ! " + ((turn == 1) ? "X" : 'O') + " has won the game.";
-            winningStatus.style.fontFamily = 'Raleway';
-            var el = document.getElementsByClassName('ctn')[0]
-            el.appendChild(winningStatus);
-            document.getElementById('tblock').innerHTML = "";
-        const restartButton = document.createElement('button');
+function deleteTimer() {
+    var player = (turn == 0) ? player1 : player2;
+    var timer = (turn == 0) ? player1.timer : player2.timer;
+    if (gameTimer.isRunning && timer <= 0) {
+        reset(player);
+        gameTimer.isRunning = false;
+        var el = document.getElementById('turn');
+        el.innerHTML = "";
+        const winningStatus = document.createElement('div');
+        winningStatus.setAttribute('id', 'winInfo');
+        winningStatus.innerHTML = "Time Up ! " + ((turn == 1) ? "X" : 'O') + " has won the game.";
+        winningStatus.style.fontFamily = 'Raleway';
+        var el = document.getElementsByClassName('ctn')[0]
+        el.appendChild(winningStatus);
+        var timerBlock = document.getElementById('tblock');
+        timerBlock.innerHTML = "";
+        var restartButton = document.createElement('button');
         restartButton.innerHTML = 'Restart'
         restartButton.setAttribute('id', "restartButton");
         restartButton.setAttribute('class', "btn btn-success");
-        el.appendChild(restartButton);
         restartButton.addEventListener('click', restartTheGame);
-    
+        el.appendChild(restartButton);
     }
 }
-
-function place() {
+// update game board according to the player's turn
+function updateGameBoard() {
     if (turn == 0) {
-        reset(user1);
-        stop(user1);
+        resetTimer(player1);
+        stopTimer(player1);
     } else {
-        reset(user2);
-        stop(user2);
+        resetTimer(player2);
+        stopTimer(player2);
     }
     const el = document.getElementById('turn')
     el.innerHTML = "It's " + (turn == 0 ? "X" : 'O') + " turn now";
@@ -185,67 +173,66 @@ function place() {
     if (available[id]) {
         const newIcon = document.createElement("i");
         const newDiv = document.createElement("div");
-        newIcon.setAttribute('class', (turn == 0 ? one : two));
+        newIcon.setAttribute('class', (turn == 0 ? OIconClass : XIconClass));
         newDiv.appendChild(newIcon);
         // this keyword refers to the element on which event listener is added
         const blockNumber = parseInt(this.getAttribute('id'));
-        console.log("Block Number is " + blockNumber);
-        mark[blockNumber] = Number(turn + 1);
-        checkForWin();
+        mark[blockNumber] = turn + 1;
         this.appendChild(newDiv);
         turn = 1 - turn;
         this.style.cursor = "not-allowed";
         available[id] = false;
+        checkForWin();
     }
     if (turn == 1 && isWon == false) {
-        reset(user2);
-        start(user2);
-    } else if (isWon == false){
-        reset(user1);
-        start(user1);
+        resetTimer(player2);
+        startTimer(player2);
+    } else if (isWon == false) {
+        resetTimer(player1);
+        startTimer(player1);
     }
 }
+// start the game
 function startTheGame() {
     this.remove();
     if (turn == 0) {
-        start(user1);
+        startTimer(player1);
     } else {
-        start(user2);
+        startTimer(player2);
     }
     const el = document.getElementById('turn')
     el.innerHTML = "It's " + (turn == 0 ? "O" : 'X') + " turn now";
     if (gameTimer.id > 0) clearInterval(gameTimer.id)
-    gameTimer.id = setInterval(clearSetTimeValue, 200);
-    gameTimer.notDone = true;
+    gameTimer.id = setInterval(deleteTimer, 200);
+    gameTimer.isRunning = true;
     resetAll();
 }
+// restart the game when someone has won
 function restartTheGame() {
     this.remove();
     for (let x = 1; x <= 9; x++) {
         const id = x.toString();
         const el = document.getElementById(id).firstChild;
-        console.log(el)
         if (el) el.remove();
     }
-    document.getElementById('winCard').remove();
+    document.getElementById('winInfo').remove();
     if (turn == 0) {
-        start(user1);
+        startTimer(player1);
     } else {
-        start(user2);
+        startTimer(player2);
     }
     const el = document.getElementById('turn')
     el.innerHTML = "It's " + (turn == 0 ? "X" : 'O') + " turn now";
     if (gameTimer.id > 0) clearInterval(gameTimer.id)
-    gameTimer.id = setInterval(clearSetTimeValue, 200);
-    gameTimer.notDone = true;
+    gameTimer.id = setInterval(deleteTimer, 200);
+    gameTimer.isRunning = true;
     resetAll();
 }
+// attaching event listeners to cells
 for (let x = 1; x <= 9; x++) {
     const id = x.toString();
-    console.log(id);
     const el = document.getElementById(id);
-    console.log(el)
-    el.addEventListener('click', place);
+    el.addEventListener('click', updateGameBoard);
 }
 document.getElementById('startButton').addEventListener('click', startTheGame);
 

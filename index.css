@@ -11,7 +11,6 @@
     column-gap: 30px;
     margin-top: 3%;
     font-family: Poppins;
-    
 }
 #grid {
     display: flex;
@@ -28,8 +27,8 @@
     width: 100px;
     pointer-events: none;
     cursor: auto;
-    
 }
+
 #grid > div:nth-child(3n + 2) {
     
     border-left: 3px solid black;
@@ -53,14 +52,12 @@
     font-weight: 800;
     font-size: 2rem;
     color: orange;
-    
-    
 }
 h1 {
    text-align: center;
    padding: 0.5rem;
 }
-#winCard {
+#winInfo {
    font-family: Poppins;
    color: maroon;
    font-size: 2rem;
